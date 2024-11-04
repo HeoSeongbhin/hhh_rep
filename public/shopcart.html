@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>쇼핑 카트</title>
+    <style>
+        body {
+            height: 100%;
+            background-color: #F3F1E9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        table caption {
+            color: red;
+            text-decoration: underline;
+        }
+
+        #totalText {
+            display: none;
+            float: left;
+            margin-right: 20px;
+        }
+    </style>
+    <script>
+        function calculateTotal(row) {
+            var quantity = row.cells[2].children[0].value;
+            var price = row.cells[1].innerHTML.replace(/[^0-9]/g, '');
+            var total = quantity * price;
+            row.cells[3].children[0].value = total.toLocaleString();
+        }
+
+        function updateTotal() {
+            var rows = document.querySelectorAll("table tr:not(:first-child)");
+            var total = 0;
+            for (var i = 0; i < rows.length; i++) {
+                total += parseInt(rows[i].cells[3].children[0].value.replace(/[^0-9]/g, ''));
+            }
+            document.getElementById("totalText").innerHTML = "합계: " + total.toLocaleString() + "원";
+            document.getElementById("totalText").style.display = "block";
+        }
+
+        function addToCart(product, price) {
+            var cart = JSON.parse(localStorage.getItem("cart")) || {};
+            cart[product] = (cart[product] || 0) + 1;
+            localStorage.setItem("cart", JSON.stringify(cart));
+
+            var row = document.querySelector(`tr td:first-child:contains("${product}")`).parentNode;
+            row.cells[2].children[0].value = cart[product];
+            calculateTotal(row);
+        }
+
+        function resetCart() {
+            localStorage.removeItem("cart");
+            var rows = document.querySelectorAll("table tr:not(:first-child)");
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                row.cells[2].children[0].value = 0;
+                calculateTotal(row);
+            }
+            document.getElementById("totalText").innerHTML = "";
+            document.getElementById("totalText").style.display = "none";
+        }
+
+        function purchase() {
+            resetCart();
+            alert("구매되었습니다!");
+        }
+
+        window.onload = function () {
+            var cart = JSON.parse(localStorage.getItem("cart")) || {};
+            var rows = document.querySelectorAll("table tr:not(:first-child)");
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var product = row.cells[0].innerHTML;
+                row.cells[2].children[0].value = cart[product] || 0;
+                calculateTotal(row);
+            }
+            if (isLoggedIn()) {
+                var savedUsername = localStorage.getItem("username");
+                document.getElementById("welcomeMsg").innerHTML = savedUsername + "님 반갑습니다.";
+                document.getElementById("welcomeMsg").style.display = "block";
+            }
+        }
+
+        function isLoggedIn() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('loggedIn') === 'true';
+        }
+    </script>
+</head>
+
+<body>
+    <form action="#">
+        <table border="1">
+            <caption>Shopping Cart</caption>
+            <tr>
+                <th>품목</th>
+                <th>가격</th>
+                <th>수량</th>
+                <th>합계</th>
+            </tr>
+            <tr>
+                <td>컴퓨터 세트</td>
+                <td>2,000,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>티셔츠</td>
+                <td>50,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>음악파일</td>
+                <td>1,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>영화파일</td>
+                <td>5,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>노트북</td>
+                <td>1,200,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>자전거</td>
+                <td>200,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>셔틀콕 세트</td>
+                <td>10,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>쇼파</td>
+                <td>100,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>수납장</td>
+                <td>70,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>팝콘</td>
+                <td>3,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+            <tr>
+                <td>쥐포채</td>
+                <td>7,000원</td>
+                <td><input type="number" min="0" step="1" value="0"
+                        onchange="calculateTotal(this.parentNode.parentNode)"></td>
+                <td><input type="text" size="6" value="0" readonly /></td>
+            </tr>
+        </table>
+        <span id="totalText"></span>
+        <input type="button" value="계산" onclick="updateTotal();" />
+        <input type="button" value="구매" onclick="purchase();" />
+        <input type="reset" value="초기화" onclick="resetCart()" />
+    </form>
+    <a href="index.html?loggedIn=true">Back to Home</a>
+
+</body>
+
+</html>

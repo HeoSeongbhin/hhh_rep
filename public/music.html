@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #song_info {
+            width: 300px;
+            float: left;
+        }
+
+        .popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+    <script>
+        function addToCart(product, price) {
+            var cart = JSON.parse(localStorage.getItem("cart")) || {};
+            cart[product] = (cart[product] || 0) + 1;
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartDisplay(); // 쇼핑카트 내용을 업데이트하는 함수 호출
+            showPopup("상품이 카트에 추가되었습니다!"); // 팝업 메시지 표시
+        }
+
+        function showPopup(message) {
+            var popup = document.getElementById("popup");
+            popup.innerHTML = message;
+            popup.style.display = "block";
+            setTimeout(function () {
+                popup.style.display = "none";
+            }, 2000); // 2초 후에 팝업 숨기기
+        }
+
+        function updateCartDisplay() {
+            var cart = JSON.parse(localStorage.getItem("cart")) || {};
+            var cartItems = Object.keys(cart);
+            var cartDisplay = "";
+
+            if (cartItems.length === 0) {
+                cartDisplay = "현재 쇼핑카트에 물품이 없습니다.";
+            } else {
+                cartDisplay = "";
+                cartItems.forEach(function (item) {
+                    cartDisplay += `${item}, ${cart[item]}개<br>`;
+                });
+            }
+
+            parent.document.getElementById("shopcart").innerHTML = `
+                <h4>Shopping Cart</h4>
+                ${cartDisplay}<br>
+                <a href="shopcart.html">쇼핑카트 보기</a>
+            `;
+        }
+    </script>
+</head>
+
+<body>
+    <div id="song_info">
+        <h4>Save the Last Dance for Me</h4>
+        <audio controls autoplay>
+            <source src="audio/old_pop.mp3" type="audio/mpeg">
+            <source src="audio/old_pop.ogg" type="audio/ogg">
+            브라우저가 오디오 요소를 지원하지 않습니다.
+        </audio>
+    </div>
+    <input type="button" value="쇼핑카트에 추가하기" onclick="addToCart('음악파일', 1000); updateCartDisplay();" />
+
+    <!-- 팝업 메시지 표시용 div 추가 -->
+    <div id="popup" class="popup"></div>
+</body>
+
+</html>

@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Web shop Page</title>
+    <link rel="stylesheet" type="text/css" href="mystyle.css" />
+    <style>
+        body {
+            height: 100%;
+            background-color: #F3F1E9;
+        }
+
+        label {
+            display: none;
+        }
+
+        input {
+            display: inline-block;
+            width: 160px;
+        }
+
+        #loginForm input[type="text"],
+        #loginForm input[type="password"],
+        #loginForm input[type="submit"],
+        #loginForm input[type="reset"] {
+            display: inline-block;
+        }
+
+        #loginForm input[type="button"] {
+            display: inline-block;
+        }
+
+        #welcomeMsg {
+            margin-top: -50px;
+            display: none;
+        }
+
+        #loginMsg {
+            display: block;
+            margin-top: 10px;
+            color: red;
+        }
+    </style>
+    <script>
+        function addToCart(product, price) {
+            var cart = JSON.parse(localStorage.getItem("cart")) || {};
+            cart[product] = (cart[product] || 0) + 1;
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartDisplay(); // 쇼핑카트 내용을 업데이트하는 함수 호출
+        }
+
+        function updateCartDisplay() {
+            var cart = JSON.parse(localStorage.getItem("cart")) || {};
+            var cartDisplay = "";
+
+            for (var item in cart) {
+                cartDisplay += `${item}, ${cart[item]}개<br>`;
+            }
+
+            document.getElementById("shopcart").innerHTML = `
+                <h4>Shopping Cart</h4>
+                ${cartDisplay}<br>
+                <a href="shopcart.html?loggedIn=true" id="shopcart-link">쇼핑카트 보기</a>
+            `;
+        }
+
+        // 로그인 함수
+        async function login() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json(); // 응답 데이터를 JSON으로 파싱
+
+                if (response.ok) {
+                    // 로그인 성공 시 사용자 정보 저장
+                    if (data && data.userInfo) { // data와 userInfo가 존재하는지 확인
+                        localStorage.setItem("loggedInUser", username); // 로그인 상태 저장
+                        localStorage.setItem(username, JSON.stringify(data.userInfo)); // 사용자 정보 저장
+                        showLoggedInState(username); // 로그인 성공 시 상태 업데이트
+                        
+                        // 로그인 성공 시 index.html로 리다이렉트
+                        window.location.href = 'index.html'; // 여기서 myaccount.html을 index.html로 변경
+                    } else {
+                        console.error('사용자 정보:', data); // 사용자 정보 출력
+                        throw new Error("사용자 정보를 가져올 수 없습니다."); // 사용자 정보가 없을 경우 에러 발생
+                    }
+                } else {
+                    document.getElementById("loginMsg").style.display = "block";
+                    document.getElementById("loginMsg").innerText = data.message || '로그인 실패. 자격 증명을 확인하세요.'; // 서버에서 반환된 오류 메시지 표시
+                }
+            } catch (error) {
+                console.error('로그인 요청 중 오류 발생:', error);
+                document.getElementById("loginMsg").style.display = "block";
+                document.getElementById("loginMsg").innerText = '로그인 요청 실패. 서버 오류가 발생했습니다.'; // 네트워크 오류 처리
+            }
+        }
+
+
+        // 로그아웃 함수
+        function logout() {
+            localStorage.removeItem("loggedInUser");
+            showLoggedOutState();
+        }
+
+        // 로그인 상태 확인 및 처리 함수
+        function checkLoginState() {
+            var isLoggedIn = localStorage.getItem("loggedInUser");
+
+            if (isLoggedIn) {
+                showLoggedInState(isLoggedIn);
+            } else {
+                showLoggedOutState();
+            }
+        }
+
+        // 로그인 상태를 보여주는 함수
+        function showLoggedInState(username) {
+            document.getElementById("welcomeMsg").innerHTML = username + "님 반갑습니다.";
+            document.getElementById("welcomeMsg").style.display = "block";
+            document.getElementById("username").style.display = "none";
+            document.getElementById("password").style.display = "none";
+            document.getElementById("loginButton").style.display = "none";
+            document.getElementById("resetButton").style.display = "none";
+            document.getElementById("register").style.display = "none";
+            document.getElementById("forgot").style.display = "none";
+            document.getElementById("logout").style.display = "inline-block";
+            document.getElementById("loginMsg").style.display = "none";
+        }
+
+        // 로그아웃 상태를 보여주는 함수
+        function showLoggedOutState() {
+            document.getElementById("welcomeMsg").innerHTML = "";
+            document.getElementById("welcomeMsg").style.display = "none";
+            document.getElementById("username").style.display = "inline-block";
+            document.getElementById("password").style.display = "inline-block";
+            document.getElementById("loginButton").style.display = "inline-block";
+            document.getElementById("resetButton").style.display = "inline-block";
+            document.getElementById("register").style.display = "inline-block";
+            document.getElementById("forgot").style.display = "inline-block";
+            document.getElementById("logout").style.display = "none";
+            document.getElementById("loginMsg").style.display = "block";
+        }
+
+        window.onload = function () {
+            updateCartDisplay();
+            checkLoginState();
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <img src="images/shop.png" width="50" height="50" /><a href="index.html">Web Shop</a>
+            </h1>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="AboutUs.html">About Us</a></li>
+                <li><a href="news.html">News</a></li>
+                <li><a href="myaccount.html">My Account</a></li>
+                <li><a href="contacts.html">Contacts</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content-wrapper">
+            <aside id="left">
+                <h4>카테고리</h4>
+                <ul>
+                    <li><a target="iframe1" href="computer.html">컴퓨터</a></li>
+                    <li><a target="iframe1" href="clothing.html">의류</a></li>
+                    <li><a target="iframe1" href="music.html">음악</a></li>
+                    <li><a target="iframe1" href="movie.html">영화</a></li>
+                    <li><a target="iframe1" href="sportsleisure.html">스포츠/레저</a></li>
+                    <li><a target="iframe1" href="furniture.html">가구/인테리어</a></li>
+                    <li><a target="iframe1" href="food.html">식품</a></li>
+                </ul>
+            </aside>
+            
+            <section id="main">
+                <article id="article1">
+                    <iframe name="iframe1" src="computer.html" width="450" height="300"></iframe>
+                </article>
+            </section>
+            
+            <aside id="right">
+                <div id="shopcart">
+                    <h4>Shopping Cart</h4>
+                    <br />
+                    <a href="shopcart.html?loggedIn=true" id="shopcart-link">쇼핑카트 보기</a>
+                </div>
+                <div id="login">
+                    <h4>Log In</h4>
+                    <form id="loginForm" onsubmit="event.preventDefault(); login();">
+                        <input type="text" id="username" placeholder="아이디" /><br />
+                        <input type="password" id="password" placeholder="패스워드" /><br />
+                        <input type="button" value="로그인" onclick="login()" id="loginButton" />
+                        <input type="reset" value="초기화" id="resetButton" /><br />
+                        <span id="loginMsg" style="display: none; color: red;"></span>
+                        <span id="welcomeMsg"></span>
+                        <a href="register.html" id="register">회원가입</a>
+                        <a href="loss.html" id="forgot">비밀번호분실</a>
+                        <a href="#" id="logout" style="display: none;" onclick="logout()">로그아웃</a>
+                    </form>
+                    <!-- 로그인 폼 내용 -->
+                </div>
+            </aside>
+        </div>
+    </div>
+</body>
+
+</html>

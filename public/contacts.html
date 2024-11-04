@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Web Shop - Contacts</title>
+    <link rel="stylesheet" type="text/css" href="mystyle.css" />
+    <script>
+        // 로그인 상태 확인 함수
+        function checkLoginStatus() {
+            var loggedInUser = localStorage.getItem("loggedInUser");
+            if (loggedInUser) {
+                // 로그인 상태를 유지하는 코드 추가
+                showLoggedInState(loggedInUser);
+            } else {
+                // 로그아웃 상태 코드 추가
+                showLoggedOutState();
+            }
+        }
+
+        // 로그인 상태 표시 함수
+        function showLoggedInState(username) {
+            // 로그인 상태 표시 코드 추가
+            document.getElementById("welcomeMsg").innerHTML = username + "님 반갑습니다.";
+            document.getElementById("welcomeMsg").style.display = "block";
+            // 기타 필요한 코드 추가
+        }
+
+        // 로그아웃 상태 표시 함수
+        function showLoggedOutState() {
+            // 로그아웃 상태 표시 코드 추가
+            document.getElementById("welcomeMsg").innerHTML = "";
+            document.getElementById("welcomeMsg").style.display = "none";
+            // 기타 필요한 코드 추가
+        }
+
+        // 페이지 로드 시 로그인 상태 확인
+        window.onload = function () {
+            checkLoginStatus();
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>
+            <img src="images/shop.png" width="50" height="50" /><a href="index.html">Web Shop</a>
+        </h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="AboutUs.html">About Us</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="myaccount.html">My Account</a></li>
+            <li><a href="contacts.html">Contacts</a></li>
+        </ul>
+    </nav>
+    <h2>연락처 정보</h2>
+    <p>전화번호: 010-0000-0000 <br />이메일: 00000000@gmail.com <br />팩스: +1(123) 456-7890</p>
+    <br />
+    <h2>SNS</h2>
+    <p>인스타그램: <a href="https://www.instagram.com/examplecompany/">https://www.instagram.com/examplecompany/</a>
+        <br />페이스북:
+        <a href="https://www.facebook.com/examplecompany/">https://www.facebook.com/examplecompany/</a> <br />트위터:
+        <a href="https://twitter.com/examplecompany/">https://twitter.com/examplecompany/</a>
+    </p>
+    <br />
+    <h2>업무 시간</h2>
+    <p>평일 오전 9시-오후 6시</p>
+    <br />
+    <h2>참고 사항</h2>
+    <p>보안 및 개인정보 보호에 관한 안내</p>
+    <br />
+    <h2>특정 서비스</h2>
+    <p>ARS로 부서 연결</p>
+    <footer></footer>
+</body>
+
+</html>

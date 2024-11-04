@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>비밀번호 분실</title>
+    <style>
+        body {
+            height: 100%;
+            background-color: #F3F1E9;
+            font-family: Arial, sans-serif;
+        }
+
+        #page-wrap {
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: inline-block;
+            width: 70px;
+            margin-left: 50px;
+            vertical-align: top;
+            /* 입력 필드와 정렬을 맞추기 위해 top으로 정렬 */
+        }
+
+        input {
+            display: inline-block;
+            width: 160px;
+            margin-left: -10px;
+            vertical-align: top;
+            /* 입력 필드와 정렬을 맞추기 위해 top으로 정렬 */
+        }
+
+        button {
+            display: inline-block;
+            padding: 1px 8px;
+            margin-left: 10px;
+            cursor: pointer;
+            vertical-align: top;
+            /* 버튼과 정렬을 맞추기 위해 top으로 정렬 */
+        }
+
+        fieldset {
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        legend {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: red;
+            text-align: center;
+        }
+
+        #message {
+            color: red;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="page-wrap">
+        <h2>비밀번호 분실</h2>
+
+        <form onsubmit="return checkId()">
+            <fieldset>
+                <legend>비밀번호 재설정</legend>
+                <label for="username">아이디</label>
+                <input type="text" id="username" required />
+                <button type="submit">확인</button> <!-- 버튼을 입력 필드 옆에 배치 -->
+            </fieldset>
+        </form>
+        <p id="message">입력하신 아이디가 일치하지 않습니다.</p>
+    </div>
+
+    <script>
+        function checkId() {
+            var id = document.getElementById("username").value;
+            var savedUsername = localStorage.getItem(id);
+
+            if (savedUsername) {
+                // 입력한 아이디가 일치할 경우 비밀번호 재설정 페이지로 이동
+                window.location.href = "password.html?username=" + id;
+                return false;
+            } else {
+                // 아이디가 일치하지 않을 경우 메시지를 표시하고 폼 제출을 막음
+                document.getElementById("message").style.display = "block";
+                return false;
+            }
+        }
+    </script>
+</body>
+
+</html>
